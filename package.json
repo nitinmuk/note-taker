@@ -1,0 +1,19 @@
+{
+  "name": "note-taker",
+  "version": "1.0.0",
+  "description": "It is an application to create and store personal notes.",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nitinmuk/note-taker.git"
+  },
+  "author": "Nitin Mukesh",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/nitinmuk/note-taker/issues"
+  },
+  "homepage": "https://github.com/nitinmuk/note-taker#readme"
+}
