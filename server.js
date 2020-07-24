@@ -7,7 +7,6 @@ const dbDir = path.resolve(__dirname, "db");
 
 
 // Sets up the Express server
-// =============================================================
 const server = express();
 const PORT = process.env.PORT || 3000;
 
@@ -16,29 +15,49 @@ server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 server.use(express.static(staticDir));
 
-// =============================================================
-
-
 // Routes
-// =============================================================
-
-server.get("/", function(request, response) {
+server.get("/", function (request, response) {
     response.sendFile(path.join(staticDir, "index.html"));
 });
 
-server.get("/notes", function(request, response) {
+server.get("/notes", function (request, response) {
     response.sendFile(path.join(staticDir, "notes.html"));
 });
 
-server.get("/api/notes", function(request, response) {
+server.get("/api/notes", function (request, response) {
     fs.readFile(path.join(dbDir, "db.json"), 'utf8', (error, data) => {
         if (error) throw error;
-        response.json(JSON.parse(data));
-    })    
+        if(data)
+        {
+            response.json(JSON.parse(data));
+        } else {
+            response.json([]);
+        }
+        
+    });
+});
+
+
+server.post("/api/notes", (request, response) => {
+    const currentNote = { title: request.body.title, text: request.body.text };
+    const file = path.join(dbDir, "db.json");
+    fs.readFile(file, 'utf8', (error, data) => {
+        if (error) throw error;
+        let savedNotes = data ? JSON.parse(data) : [];
+        savedNotes.push(currentNote);
+        savedNotes = savedNotes.map((note, index) => {
+            note.id = index + 1;
+            return note;
+        });
+        fs.writeFile(file, JSON.stringify(savedNotes), error => {
+            if (error) throw error;
+            console.log(`New note with id = ${savedNotes.length} saved successfully`);
+            response.json(currentNote);
+        });
+    });
 });
 
 // Starts the server to begin listening
-// =============================================================
-server.listen(PORT, function() {
+server.listen(PORT, function () {
     console.log("server listening on PORT " + PORT);
 });
