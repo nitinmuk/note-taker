@@ -4,7 +4,7 @@
   "description": "It is an application to create and store personal notes.",
   "main": "server.js",
   "scripts": {
-    "test": "node server.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
