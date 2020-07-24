@@ -1,7 +1,9 @@
 const express = require("express")
 const path = require("path");
+const fs = require("fs");
 
 const staticDir = path.resolve(__dirname, "public");
+const dbDir = path.resolve(__dirname, "db");
 
 
 // Sets up the Express server
@@ -20,10 +22,19 @@ server.use(express.static(staticDir));
 // Routes
 // =============================================================
 
-// Basic route that sends the user first to the AJAX Page
-
 server.get("/", function(request, response) {
     response.sendFile(path.join(staticDir, "index.html"));
+});
+
+server.get("/notes", function(request, response) {
+    response.sendFile(path.join(staticDir, "notes.html"));
+});
+
+server.get("/api/notes", function(request, response) {
+    fs.readFile(path.join(dbDir, "db.json"), 'utf8', (error, data) => {
+        if (error) throw error;
+        response.json(JSON.parse(data));
+    })    
 });
 
 // Starts the server to begin listening
