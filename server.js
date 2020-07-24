@@ -9,7 +9,7 @@ const staticDir = path.resolve(__dirname, "public");
 const server = express();
 const PORT = process.env.PORT || 3000;
 
-// Sets up the Express server to handle data parsing
+// Sets up the Express server to handle data parsing and serve static files
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 server.use(express.static(staticDir));
