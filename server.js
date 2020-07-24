@@ -4,6 +4,7 @@ const fs = require("fs");
 
 const staticDir = path.resolve(__dirname, "public");
 const dbDir = path.resolve(__dirname, "db");
+const dbFile = path.join(dbDir, "db.json");
 
 
 // Sets up the Express server
@@ -25,23 +26,21 @@ server.get("/notes", function (request, response) {
 });
 
 server.get("/api/notes", function (request, response) {
-    fs.readFile(path.join(dbDir, "db.json"), 'utf8', (error, data) => {
+    fs.readFile(dbFile, 'utf8', (error, data) => {
         if (error) throw error;
-        if(data)
-        {
+        if (data) {
             response.json(JSON.parse(data));
         } else {
             response.json([]);
         }
-        
+
     });
 });
 
 
 server.post("/api/notes", (request, response) => {
     const currentNote = { title: request.body.title, text: request.body.text };
-    const file = path.join(dbDir, "db.json");
-    fs.readFile(file, 'utf8', (error, data) => {
+    fs.readFile(dbFile, 'utf8', (error, data) => {
         if (error) throw error;
         let savedNotes = data ? JSON.parse(data) : [];
         savedNotes.push(currentNote);
@@ -49,10 +48,24 @@ server.post("/api/notes", (request, response) => {
             note.id = index + 1;
             return note;
         });
-        fs.writeFile(file, JSON.stringify(savedNotes), error => {
+        fs.writeFile(dbFile, JSON.stringify(savedNotes), error => {
             if (error) throw error;
             console.log(`New note with id = ${savedNotes.length} saved successfully`);
             response.json(currentNote);
+        });
+    });
+});
+
+server.delete("/api/notes/:id", (request, response) => {
+    fs.readFile(dbFile, 'utf8', (error, data) => {
+        if (error) throw error;
+        let savedNotes = data ? JSON.parse(data) : [];
+        savedNotes = savedNotes.filter((note, index) => {
+            return note.id != request.params.id;
+        });
+        fs.writeFile(dbFile, JSON.stringify(savedNotes), error => {
+            if (error) throw error;
+            response.end();
         });
     });
 });
