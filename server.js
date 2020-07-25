@@ -17,10 +17,6 @@ server.use(express.json());
 server.use(express.static(staticDir));
 
 // Routes
-server.get("/", function (request, response) {
-    response.sendFile(path.join(staticDir, "index.html"));
-});
-
 server.get("/notes", function (request, response) {
     response.sendFile(path.join(staticDir, "notes.html"));
 });
@@ -68,6 +64,10 @@ server.delete("/api/notes/:id", (request, response) => {
             response.end();
         });
     });
+});
+
+server.get("*", function (request, response) {
+    response.sendFile(path.join(staticDir, "index.html"));
 });
 
 // Starts the server to begin listening
